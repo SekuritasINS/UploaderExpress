@@ -16,7 +16,7 @@ const Main = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/")
+      .get("https://backend-express-uploader.vercel.app/")
       .then((response) => {
         console.log(response.data);
         setError(false);
