@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Label } from "./Label";
 import { Input } from "./Input";
 import { cn } from "../utils/motion";
@@ -54,9 +54,17 @@ export function SubmitDemo() {
     if (confirm("You're about to delete all the input. Continue?") == true) {
       form.reset();
       toast.success("Input cleared!");
+      setIsExeFile(false);
     } else {
       return;
     }
+  };
+
+  const openFolderTab = () => {
+    window.open(
+      "https://drive.google.com/drive/folders/1ZD-dOZ2-ctGbfEZk5MqO8Ki4XiIEW8e8?usp=sharing",
+      "_blank",
+    );
   };
 
   const handleSubmit = (e) => {
@@ -85,20 +93,20 @@ export function SubmitDemo() {
       const reader = new FileReader();
 
       reader.onload = (f) => {
-        fetch(`${url}?${qs}`, {
+        const promise = fetch(`${url}?${qs}`, {
           method: "POST",
           mode: "no-cors",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify([...new Int8Array(f.target.result)]), // Upload file data as byte array
-        })
-          .then(() => {
-            toast.success(`File '${file.name}' Successfully Uploaded!`);
-          })
-          .catch((error) =>
-            toast.error(`Failed to upload '${file.name}': ${error}`),
-          );
+          body: JSON.stringify([...new Int8Array(f.target.result)]), //upload file data as byte array
+        });
+
+        toast.promise(promise, {
+          loading: "Uploading...",
+          success: `File ${file.name} successfully uploaded!`,
+          error: "Sorry, something went wrong!",
+        });
       };
 
       reader.readAsArrayBuffer(file); // Read file as array buffer
@@ -169,10 +177,19 @@ export function SubmitDemo() {
             <Switch onClick={() => setIsFolder(!isFolder)} />
             <Label className={`${styleToggle}`}>Folder</Label>
           </div>
-          <div>
+          <div className="flex items-center justify-between gap-3">
+            <button
+              type="button"
+              className="flex items-center justify-center rounded-lg bg-green-600 px-3 py-1 text-white hover:bg-green-700"
+            >
+              <a className="text-sm" onClick={openFolderTab}>
+                Open Folder
+              </a>
+            </button>
             <button
               onClick={handleResetForm}
-              className="rounded-lg bg-red-700 px-3 py-1 text-sm text-white"
+              type="reset"
+              className="rounded-lg bg-red-700 px-3 py-1 text-sm text-white hover:bg-red-800"
               id="clear-btn"
             >
               Clear
@@ -204,8 +221,6 @@ const BottomGradient = () => {
 
 const LabelInputContainer = ({ children, className }) => {
   return (
-    <div className={cn("flex w-full flex-col space-y-2", className)}>
-      {children}
-    </div>
+    <div className={cn("flex w-full flex-col", className)}>{children}</div>
   );
 };
