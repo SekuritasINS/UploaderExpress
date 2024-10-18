@@ -143,7 +143,7 @@ export function SubmitDemo() {
             placeholder="Name for your file"
             type="text"
             name="filename"
-            disabled={isExeFile}
+            disabled={isExeFile || isFolder}
           />
         </LabelInputContainer>
         {isFolder ? (
