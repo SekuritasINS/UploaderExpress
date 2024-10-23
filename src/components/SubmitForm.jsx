@@ -42,7 +42,8 @@ export function SubmitDemo() {
         file.name.endsWith(".dmg") ||
         file.name.endsWith(".tar") ||
         file.name.endsWith(".zip") ||
-        file.name.endsWith(".appx"),
+        file.name.endsWith(".appx") ||
+        file.name.endsWith(".gz"),
     );
 
     setIsExeFile(isExeOrMsi);
